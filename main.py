@@ -27,7 +27,7 @@ async def main():
         if signal_to_switch_to_camera.is_pressed and not is_camera_out:
             await switch_channel(camera_output["OUTPUT_CHANNEL"], camera_output["INPUT_CHANNEL"])
             is_camera_out = True
-        elif signal_to_switch_to_hdmi.is_pressed and not is_camera_out:
+        elif signal_to_switch_to_hdmi.is_pressed and is_camera_out:
             await switch_channel(hdmi_output["OUTPUT_CHANNEL"], hdmi_output["INPUT_CHANNEL"])
             is_camera_out = False
     print(f"\n{datetime.datetime.now()} __ Finished auto switching.")
