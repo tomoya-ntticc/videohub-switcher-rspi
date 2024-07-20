@@ -4,12 +4,12 @@ TIMEOUT_SECONDS = 5
 
 ROUTING = {
     "camera": {
-        "OUTPUT_CHANNELS": 1,
-        "INPUT_CHANNELS": 1,
+        "OUTPUT_CHANNEL": 1,
+        "INPUT_CHANNEL": 1,
     },
     "hdmi": {
-        "OUTPUT_CHANNELS": 1,
-        "INPUT_CHANNELS": 2,
+        "OUTPUT_CHANNEL": 1,
+        "INPUT_CHANNEL": 2,
     },
 }
 

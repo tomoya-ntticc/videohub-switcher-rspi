@@ -12,8 +12,6 @@ tn = telnetlib.Telnet(IP_ADDRESS, PORT, TIMEOUT_SECONDS)
 signal_to_switch_to_camera = Button(PIN_FOR_CHANGE_TO_CAMERA, pull_up=False)
 signal_to_switch_to_hdmi = Button(PIN_FOR_CHANGE_TO_HDMI, pull_up=False)
 
-is_camera_out = True
-
 camera_output = ROUTING["camera"]
 hdmi_output = ROUTING["hdmi"]
 
@@ -24,15 +22,14 @@ async def switch_channel(output_channel: int, input_channels: int):
 
 async def main():
     print(f"\n{datetime.datetime.now()} __ Start auto switching.\n")
+    is_camera_out = True
     while True:
-        if signal_to_switch_to_camera.is_pressed and is_camera_out:
-            asyncio.run(
-                switch_channel(camera_output["OUTPUT_CHANNELS"], camera_output["INPUT_CHANNELS"]),
-            )
+        if signal_to_switch_to_camera.is_pressed and not is_camera_out:
+            await switch_channel(camera_output["OUTPUT_CHANNEL"], camera_output["INPUT_CHANNEL"])
+            is_camera_out = True
         elif signal_to_switch_to_hdmi.is_pressed and not is_camera_out:
-            asyncio.run(
-                switch_channel(hdmi_output["OUTPUT_CHANNELS"], hdmi_output["INPUT_CHANNELS"]),
-            )
+            await switch_channel(hdmi_output["OUTPUT_CHANNEL"], hdmi_output["INPUT_CHANNEL"])
+            is_camera_out = False
     print(f"\n{datetime.datetime.now()} __ Finished auto switching.")
 
 if __name__ == "__main__":
