@@ -26,11 +26,11 @@ async def main():
     print(f"\n{datetime.datetime.now()} __ Start auto switching.\n")
     while True:
         if signal_to_switch_to_camera.is_pressed and is_camera_out:
-            await asyncio.run(
+            asyncio.run(
                 switch_channel(camera_output["OUTPUT_CHANNELS"], camera_output["INPUT_CHANNELS"]),
             )
         elif signal_to_switch_to_hdmi.is_pressed and not is_camera_out:
-             await asyncio.run(
+            asyncio.run(
                 switch_channel(hdmi_output["OUTPUT_CHANNELS"], hdmi_output["INPUT_CHANNELS"]),
             )
     print(f"\n{datetime.datetime.now()} __ Finished auto switching.")
