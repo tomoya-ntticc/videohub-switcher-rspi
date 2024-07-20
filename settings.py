@@ -3,19 +3,15 @@ PORT = 9990
 TIMEOUT_SECONDS = 5
 
 ROUTING = {
-    "streaming": {
-        "OUTPUT_CHANNELS": [11],
-        "INPUT_CHANNELS": [4, 5, 8, 9],
-        "INTERVAL_SECONDS": 31
+    "camera": {
+        "OUTPUT_CHANNELS": 1,
+        "INPUT_CHANNELS": 1,
     },
-    "portrait": {
-        "OUTPUT_CHANNELS": [6, 7],
-        "INPUT_CHANNELS": [6, 7],
-        "INTERVAL_SECONDS": 23
+    "hdmi": {
+        "OUTPUT_CHANNELS": 1,
+        "INPUT_CHANNELS": 2,
     },
-    "landscape": {
-        "OUTPUT_CHANNELS": [4, 5, 8],
-        "INPUT_CHANNELS": [4, 5, 8, 9],
-        "INTERVAL_SECONDS": 47
-    }
 }
+
+PIN_FOR_CHANGE_TO_CAMERA = 14
+PIN_FOR_CHANGE_TO_HDMI = 15

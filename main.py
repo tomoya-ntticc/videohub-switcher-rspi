@@ -1,33 +1,38 @@
 import asyncio
 import datetime
-import random
 import telnetlib
 
-import settings
+from gpiozero import Button
+
+from settings import IP_ADDRESS, PORT, TIMEOUT_SECONDS, PIN_FOR_CHANGE_TO_CAMERA, PIN_FOR_CHANGE_TO_HDMI, ROUTING
 
 
-tn = telnetlib.Telnet(settings.IP_ADDRESS, settings.PORT, settings.TIMEOUT_SECONDS)
+tn = telnetlib.Telnet(IP_ADDRESS, PORT, TIMEOUT_SECONDS)
 
-streaming = settings.ROUTING["streaming"]
-portrait = settings.ROUTING["portrait"]
-landscape = settings.ROUTING["landscape"]
+signal_to_switch_to_camera = Button(PIN_FOR_CHANGE_TO_CAMERA, pull_up=False)
+signal_to_switch_to_hdmi = Button(PIN_FOR_CHANGE_TO_HDMI, pull_up=False)
 
-async def switch_channels(output_channels: list[int], input_channels: list[int], sleep_seconds: int = 1):
-    while True:
-        random.shuffle(input_channels)
-        for index, output_channel in enumerate(output_channels):
-            tn.write((f"video output routing:\n{output_channel} {input_channels[index]}\n\n").encode('ascii'))
-            tn.read_until(b"ACK", settings.TIMEOUT_SECONDS)
-        print(f"{datetime.datetime.now()} __ Switched channels, output:{output_channels}, input:{input_channels}")
-        await asyncio.sleep(sleep_seconds)
+is_camera_out = True
+
+camera_output = ROUTING["camera"]
+hdmi_output = ROUTING["hdmi"]
+
+async def switch_channel(output_channel: int, input_channels: int):
+        tn.write((f"video output routing:\n{output_channel} {input_channels}\n\n").encode('ascii'))
+        tn.read_until(b"ACK", TIMEOUT_SECONDS)
+        print(f"{datetime.datetime.now()} __ Switched channels, output:{output_channel}, input:{input_channels}")
 
 async def main():
     print(f"\n{datetime.datetime.now()} __ Start auto switching.\n")
-    await asyncio.gather(
-        switch_channels(streaming["OUTPUT_CHANNELS"], streaming["INPUT_CHANNELS"], streaming["INTERVAL_SECONDS"]),
-        switch_channels(portrait["OUTPUT_CHANNELS"], portrait["INPUT_CHANNELS"], portrait["INTERVAL_SECONDS"]),
-        switch_channels(landscape["OUTPUT_CHANNELS"], landscape["INPUT_CHANNELS"], landscape["INTERVAL_SECONDS"]),
-    )
+    while True:
+        if signal_to_switch_to_camera.is_pressed and is_camera_out:
+            await asyncio.run(
+                switch_channel(camera_output["OUTPUT_CHANNELS"], camera_output["INPUT_CHANNELS"]),
+            )
+        elif signal_to_switch_to_hdmi.is_pressed and not is_camera_out:
+             await asyncio.run(
+                switch_channel(hdmi_output["OUTPUT_CHANNELS"], hdmi_output["INPUT_CHANNELS"]),
+            )
     print(f"\n{datetime.datetime.now()} __ Finished auto switching.")
 
 if __name__ == "__main__":
